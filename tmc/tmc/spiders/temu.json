@@ -1,0 +1,29 @@
+{
+    "name": "temu",
+    "version": "1.0",
+    "description": "Temu Spider",
+    "spider_type": "temu",
+    "home_elements": {
+        "main_content_list": "//div[contains(@class,'mainConten')]//div[@id='home_recommend_list']"
+    },
+    "start_urls": [
+        {
+        "url": "https://www.temu.com/",
+        "method": "GET"
+        }
+    ],
+    "rules": [
+        {
+        "url_pattern": "/product/.*",
+        "action": {
+            "type": "parse_product"
+        }
+        },
+        {
+        "url_pattern": "/category/.*",
+        "action": {
+            "type": "parse_category"
+        }
+        }
+    ]
+}

@@ -8,6 +8,7 @@ import undetected_chromedriver as uc
 import logging
 import certifi
 import os
+from selenium.webdriver.common.action_chains import ActionChains as AC
 
 # 配置SSL证书路径
 os.environ['REQUESTS_CA_BUNDLE'] = certifi.where()
@@ -72,17 +73,45 @@ class SeleniumUndetectedMiddleware:
 
             # --- 根据 meta 执行等待或操作 ---
             wait_time = request.meta.get('selenium_wait_time', 10)
-            # wait_until_selector = request.meta.get('selenium_wait_until')
+            wait_until_selector = request.meta.get('selenium_wait_until')
+            temu = request.meta.get('temu')
+            logger.info(f"temu: {temu}")
             scroll_down = request.meta.get('selenium_scroll_down')  # 示例：向下滚动次数
+            scroll_up = request.meta.get('selenium_scroll_up')  # 示例：向上滚动次数
             click_selector = request.meta.get('selenium_click')  # 示例: 点击元素
 
-            # if wait_until_selector:
-            #     logger.info(f"Waiting for element: {wait_until_selector}")
-            #     WebDriverWait(driver, wait_time).until(
-            #         EC.presence_of_element_located(
-            #             (By.CSS_SELECTOR, wait_until_selector))
-            #     )
-            #     logger.info("Element found.")
+            if wait_until_selector:
+                logger.info(f"Waiting for element: {temu.home_elements.main_content_list}")
+                WebDriverWait(driver, wait_time).until(
+                    EC.presence_of_element_located(
+                        (By.XPATH, temu['home_elements']['main_content_list']))
+                )
+                logger.info("Element found.")
+                # search_input_element = driver.find_element(
+                #     By.XPATH, wait_until_selector)
+                # action = AC(driver)
+                # action.move_to_element(search_input_element).perform()
+                # time.sleep(1)  # 等待元素可见
+                # search_input_element.send_keys("test")  # 示例: 输入搜索内容
+                # search_btn_element = driver.find_element(
+                #     By.XPATH, "//input[contains(@class, 's_btn') and @type='submit' and @id='su']")
+                # # search_btn_element.click()  # 示例: 点击搜索按钮
+                # action.move_to_element(search_btn_element).click().perform()
+            if scroll_down:
+                logger.info(f"Scrolling down {scroll_down} times...")
+                for _ in range(scroll_down):
+                    driver.execute_script(
+                        "window.scrollTo(0, document.body.scrollHeight);")
+                    time.sleep(request.meta.get(
+                        'selenium_scroll_delay', 1))  # 等待滚动加载
+
+            if scroll_up:
+                logger.info(f"Scrolling up {scroll_up} times...")
+                for _ in range(scroll_up):
+                    driver.execute_script(
+                        "window.scrollTo(0, document.body.scrollHeight);")
+                    time.sleep(request.meta.get(
+                        'selenium_scroll_delay', 1))
 
             if click_selector:
                 logger.info(f"Clicking element: {click_selector}")
@@ -95,13 +124,6 @@ class SeleniumUndetectedMiddleware:
                 # 点击后可能需要额外等待内容加载
                 time.sleep(request.meta.get('selenium_wait_after_click', 3))
 
-            if scroll_down:
-                logger.info(f"Scrolling down {scroll_down} times...")
-                for _ in range(scroll_down):
-                    driver.execute_script(
-                        "window.scrollTo(0, document.body.scrollHeight);")
-                    time.sleep(request.meta.get(
-                        'selenium_scroll_delay', 1))  # 等待滚动加载
 
             # 等待一小段时间确保 JS 执行完成 (或使用更精确的等待条件)
             # time.sleep(3) # 可以根据需要调整或移除
@@ -110,7 +132,14 @@ class SeleniumUndetectedMiddleware:
             body = driver.page_source
             current_url = driver.current_url  # URL 可能已改变 (例如重定向后)
             logger.info(f"Page source retrieved. Current URL: {current_url}")
-
+            # 循环判断当前 url 是否重定向到验证页面，验证完后返回
+            while "verifyCode" in current_url:
+                logger.info("Page contains 'verifyCode', waiting...")
+                time.sleep(10)
+                driver.get(request.url)  # 重新加载页面，尝试通过验证
+                current_url = driver.current_url  # 更新 current_url
+                body = driver.page_source  # 更新页面内容
+                logger.info(f"Current URL after verification attempt: {current_url}")
             # 循环判断当前 url 是否重定向到验证页面，验证完后返回
             # while "verifyCode" in current_url:
             #     logger.info("Page contains'verify', skipping.")

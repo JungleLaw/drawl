@@ -1,5 +1,6 @@
 import scrapy
 import logging
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -16,20 +17,28 @@ class TmccSpider(scrapy.Spider):
 
         for url in self.start_urls:
             logger.info(f"Yielding request for {url} using Selenium")
+
+            # Load the JSON file
+            with open("./temu.json", "r") as file:
+                temu_data = json.load(file)
+
+            meta = {
+                'use_selenium': True,  # 标记需要 Selenium 处理
+                # --- 可选参数传递给 Middleware ---
+                'selenium_wait_time': 60,  # 等待超时时间
+                'selenium_wait_until': '//input[@class=\'s_ipt\']',  # 等待特定元素出现
+                'selenium_scroll_up': 3,  # 向下滚动 3 次
+                'selenium_scroll_down': 1,  # 向下滚动 3 次
+                'selenium_scroll_delay': 1.5,  # 每次滚动后等待 1.5 秒
+                # 'selenium_click': 'button.load-more', # 示例: 点击加载更多按钮
+                # 'selenium_wait_after_click': 5, # 点击后等待 5 秒
+                'chrome_version': 135,  # 可选，指定 Chrome 主版本
+                'temu': temu_data,  # 将 JSON 数据传递给请求
+            }
             yield scrapy.Request(
                 url,
                 callback=self.parse_page,
-                meta={
-                    'use_selenium': True,  # 标记需要 Selenium 处理
-                    # --- 可选参数传递给 Middleware ---
-                    'selenium_wait_time': 15,  # 等待超时时间
-                    # 'selenium_wait_until': '#some-element-that-loads-via-js',  # 等待特定元素出现
-                    'selenium_scroll_down': 3,  # 向下滚动 3 次
-                    'selenium_scroll_delay': 1.5,  # 每次滚动后等待 1.5 秒
-                    # 'selenium_click': 'button.load-more', # 示例: 点击加载更多按钮
-                    # 'selenium_wait_after_click': 5, # 点击后等待 5 秒
-                    'chrome_version': 135  # 可选，指定 Chrome 主版本
-                }
+                meta=meta,
             )
         # 也可以在这里添加不需要 Selenium 处理的普通请求
         # yield scrapy.Request('https://example.com/static-page', callback=self.parse_static)
