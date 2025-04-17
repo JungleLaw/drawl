@@ -4,7 +4,13 @@
     "description": "Temu Spider",
     "spider_type": "temu",
     "home_elements": {
-        "main_content_list": "//div[contains(@class,'mainConten')]//div[@id='home_recommend_list']"
+        "main_content_list": "//div[contains(@class,'mainConten')]//div[@id='home_recommend_list']",
+        "main_content_header":"//div[@id='mainHeader']/div[@class='_2UbxPzJy bb4_zDqy ZVmrxsji']/div[@class='_3bmWTnN_ JCZsaRAu']/div[@class='_1CmrZeBi yzL0lSdQ']/div[@class='_1QyDdSty mainContent']",
+        "wait_list": "//div[@id='mainHeader']/div[@class='_2UbxPzJy bb4_zDqy ZVmrxsji']/div[@class='_3bmWTnN_ JCZsaRAu']/div[@class='_1CmrZeBi yzL0lSdQ']/div[@class='_1QyDdSty mainContent']/div[@class='_2Hb9NRoy _3GBVQxAr _2lAzK2d0 _18NXRGyQ']/div[@class='_2jbDKJi2 _1ds_vWpj _3ZwPkfOp']/div[@class='_2CUszeFD']/div[@class='_3_qRwsZv']/ul[@class='_3whZW_Rn _27tw5ERt']/div/div[@class='_3-5bT22U']",
+        "category_trigger": "//div[@role='button' and contains(@class,'_2jbDKJi2')]",
+        "category_list": "//li[contains(@class,'_3kkUa4Zr')]//a",
+        "goods_list": "//div[@class='js-category-goodsList']",
+        "goods_list_item": "//div[@class='_6q6qVUF5 _1UrrHYym']"
     },
     "start_urls": [
         {
