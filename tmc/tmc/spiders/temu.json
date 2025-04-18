@@ -10,7 +10,14 @@
         "category_trigger": "//div[@role='button' and contains(@class,'_2jbDKJi2')]",
         "category_list": "//li[contains(@class,'_3kkUa4Zr')]//a",
         "goods_list": "//div[@class='js-category-goodsList']",
-        "goods_list_item": "//div[@class='_6q6qVUF5 _1UrrHYym']"
+        "goods_list_item": "//div[@class='_6q6qVUF5 _1UrrHYym']",
+        "goods_list_item_img_wrap": "//div[contains(@class,'goods-image-container-external')]",
+        "goods_list_item_title_wrap": "//div[@class='_6q6qVUF5 _1QhQr8pq _2gAD5fPC _3AbcHYoU']",
+        "goods_list_item_price_wrap": "//div[@class='_3tAUu0RX _1QhQr8pq']']",
+        "goods_list_item_raw_price_wrap": "//span[@class='_3TAPHDOX iOhbBngG']",
+        "goods_list_item_rate_wrap": "//div[@class='WCDudEtm _2JVm1TM2']",
+        "goods_list_item_sold_wrap": "//span[@class='_3CizNywp']",
+        "goods_list_item_tag_wrap": "//div[@class='_2-CiBoR0']"
     },
     "start_urls": [
         {

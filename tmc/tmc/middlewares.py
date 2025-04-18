@@ -69,14 +69,6 @@ class SeleniumUndetectedMiddleware:
         import random
         # 随机等待时间，避免被检测到
         driver.implicitly_wait(random.randint(120, 220))
-        # if crawl_home:
-        #     logger.info("Crawling home category...")
-        #     # 这里可以调用爬虫的回调函数，例如 crawl_home_category
-        #     self.crawl_home_category(driver, request)
-        # else:
-        #     logger.info("Crawling category list...")
-        #     # 这里可以调用爬虫的回调函数，例如 crawl_category_list
-        #     self.crawl_category_list(driver, request)
 
         logger.info("Crawling home category...")
         # 解析首页分类信息

@@ -70,21 +70,23 @@ class TmccSpider(scrapy.Spider):
         logger.info(f"Category list elements found: {len(category_list_elements)}")
         self.meta['crawl_home'] = False
         # 从 category_list_elements 中提取数据
-        for element in category_list_elements:
-            logger.info(f"Category list element: {element}")
+        # for element in category_list_elements:
+        for i in range(len(category_list_elements)):
+            logger.info(f"Category list element: {category_list_elements[i]}")
         #     # 你可以在这里解析每个元素，提取你需要的数据
         #     # 例如，使用正则表达式或进一步的 XPath/CSS 选择器来提取信息
         #     # 使用 CSS 或 XPath 提取元素的中包含的 a 标签
             # 提取 a 标签的 href 属性
-            category_link = element.xpath('@href').get()
-            logger.info(f"Category link: {category_link}")
-            # logger.info(f"Category name: {category_name}, Category link: {category_link}")
-            url = f"https://www.temu.com{category_link}"
-            yield scrapy.Request(
-                url,
-                callback=self.parse_category,
-                meta=self.meta,
-            )
+            if i != 0:
+                category_link = category_list_elements[i].xpath('@href').get()
+                logger.info(f"Category link: {category_link}")
+                # logger.info(f"Category name: {category_name}, Category link: {category_link}")
+                url = f"https://www.temu.com{category_link}"
+                yield scrapy.Request(
+                    url,
+                    callback=self.parse_category,
+                    meta=self.meta,
+                )
         #     # 你可以将提取的数据存储到字典中，或者进一步处理
         #     yield {
         #         'category_name': category_name,
@@ -110,7 +112,18 @@ class TmccSpider(scrapy.Spider):
         #     '#some-element-that-loads-via-js::text').getall()
         # logger.info(f"Dynamic content found: {dynamic_content}")
         body = response.body
+        with open(f"response_body_{title}.html", "wb") as file:
+            file.write(body)
         # 使用 XPath 解析页面内容,返回的是一个列表，列表中每个元素都是一个 Selector 对象
         goods_list_item_elements = response.xpath(self.temu_data['home_elements']['goods_list_item'])
         logger.info(f"Goods list item elements found: {len(goods_list_item_elements)}")
+        for goods_list_item in goods_list_item_elements:
+            # 你可以在这里解析每个元素，提取你需要的数据
+            # 例如，使用正则表达式或进一步的 XPath/CSS 选择器来提取信息
+            # 使用 CSS 或 XPath 提取元素的中包含的 a 标签
+            # 提取 a 标签的 href 属性
+            title_wrap = goods_list_item.xpath(self.temu_data['home_elements']['goods_list_item_title_wrap'])
+            logger.info(f"Goods list item: {title_wrap}")
+            title_text = title_wrap.xpath(".//h3[@class='_2BvQbnbN']/text()")
+            logger.info(f"Goods list item title: {title_text}")
         logger.info("Finished parsing Goods list.")
